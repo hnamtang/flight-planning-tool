@@ -1,0 +1,16 @@
+# Exclude output directory
+output/
+
+# build
+__pycache__
+.ipynb_checkpoints
+
+# scripts
+*.pdf
+
+# Exclude Python virtual environment
+.venv_fmpd
+
+# Misc
+config/
+.DS_Store
