@@ -13,6 +13,22 @@ The primary goal is to compute a lateral flight path in conformance with the pub
 
 Future development may include support for additional leg types, SID transition, approach transition, final approach, and missed approach procedures, and constraints on en route waypoint selection (e.g., due to airspace restrictions).
 
+## Cloning the Repository
+
+To get started, first clone this repository from Github via HTTPS with:
+
+```bash
+git clone https://github.com/hnamtang/flight-planning-tool.git
+cd flight-planning-tool
+```
+
+or via SSH with:
+
+```bash
+git clone git@github.com:hnamtang/flight-planning-tool.git
+cd flight-planning-tool
+```
+
 ## Requirements
 
 - Python 3.11 or higher.
