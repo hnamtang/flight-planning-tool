@@ -12,7 +12,7 @@ def run_gui(args):
 
     # Load API key for Google Maps
     api_key = load_api_key()
-    if not api_key:
+    if args.plot in ("gmplot", "both") and not api_key:
         print("Google Maps API key not found.")
         print("Please run: python3 main.py --save-api-key YOUR_KEY")
         sys.exit(1)
