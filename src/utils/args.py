@@ -1,5 +1,4 @@
 import argparse
-import os
 
 
 def parse_arguments():
@@ -120,28 +119,4 @@ def parse_arguments():
         help="Standard Terminal Arrival Route (STAR) procedure name (e.g., KLF24R).",
     )
 
-    args = parser.parse_args()
-
-    # Check arguments
-    if args.no_gui:
-        required_healess_fields = (
-            args.org_airport,
-            args.org_rwy,
-            args.sid,
-            args.dest_airport,
-            args.dest_rwy,
-            args.star,
-        )
-        if not all(required_healess_fields):
-            parser.error(
-                "In headless mode, the following arguments are required: "
-                "`--org-airport`, `--org-rwy`, `--sid`, `--dest_airport`, `--dest-rwy`, and `--star`."
-            )
-    else:
-        if not (args.to_csv or args.plot):
-            parser.error(
-                "When running in GUI mode (default), at least one of `--to-csv` or `--plot` must be specified. "
-                "Otherwise, the GUI will do nothing after clicking 'Generate'."
-            )
-
-    return args
+    return parser.parse_args()
