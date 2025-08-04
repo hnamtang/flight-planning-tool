@@ -12,7 +12,12 @@ The primary goal is to compute a lateral flight path in conformance with the pub
 - **Supported leg transition**: Fly-by waypoint.
 - **En route selection**: Waypoints are automatically chosen near the great-circle route between SID exit and STAR entry points using a K-D Tree algorithm.
 
-Future development may include support for additional leg types, fly-over waypoint, SID transition, approach transition, final approach, and missed approach procedures, and constraints on en route waypoint selection (e.g., due to airspace restrictions).
+Future improvements may include:
+
+- Additional leg types and fly-over waypoint support.
+- Transitions, final, and missed approach procedures.
+- Constraints on en route waypoint selection (e.g., due to airspace restrictions).
+- Redesign of the GUI to reflect actual FMS layout.
 
 ## Cloning the Repository
 
