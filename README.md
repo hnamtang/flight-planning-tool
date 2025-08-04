@@ -74,16 +74,16 @@ python3 main.py [options]
 ```
 
 - Input parameters via the interface.
-- Use command-line options to control the behavior when the "generate" button is clicked.
+- Use command-line options to control the behavior when the "Generate" button is clicked.
 
 **Options:** The GUI mode accepts the following command-line arguments
 
 - `--to-csv`
   - Opens the GUI.
-  - Clicking "generate" button saves the trajectory coordinates to a CSV file in `./output/`.
+  - Clicking "Generate" button saves the trajectory coordinates to a CSV file in `./output/`.
 - `--plot {matplotlib,gmplot,both}`
   - Opens the GUI.
-  - Clicking "generate" button displays the trajectory plot using the specified backend (Matplotlib, gmplot, or both).
+  - Clicking "Generate" button displays the trajectory plot using the specified backend (Matplotlib, gmplot, or both).
 
 **Examples:**
 
