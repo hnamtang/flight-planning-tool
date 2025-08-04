@@ -17,7 +17,7 @@ def parse_arguments():
     prog_epilog = (
         "Example usage:\n"
         "  Launch GUI:\n"
-        "    python3 main.py\n"
+        "    python3 main.py --to-csv --plot matplotlib\n"
         "\n"
         "  Run in headless mode:\n"
         "    python3 main.py --no-gui \\\n"
@@ -30,14 +30,27 @@ def parse_arguments():
         "                    --dest-rwy 24R \\\n"
         "                    --star KLF24R\n"
         "\n"
-        "Note: Only CF, DF, RF, and TF legs are currently supported.\n"
+        "Note: \n"
+        "    1. Only CF, DF, RF, and TF legs are currently supported.\n"
+        "    2. In headless mode, the following arguments are required: "
+        "`--org-airport`, `--org-rwy`, `--sid`, `--dest_airport`, `--dest-rwy`, and `--star`."
     )
     parser = argparse.ArgumentParser(
         prog="Flight Planning Tool",
         description=prog_description,
         epilog=prog_epilog,
         formatter_class=argparse.RawTextHelpFormatter,
+        add_help=False,
     )
+    # Add custom help argument
+    parser.add_argument(
+        "-h",
+        "--help",
+        action="help",
+        default=argparse.SUPPRESS,
+        help="Show this help message and exit.",
+    )
+
     # Save API key first
     parser.add_argument(
         "--save-api-key",
@@ -50,61 +63,85 @@ def parse_arguments():
     parser.add_argument(
         "--no-gui",
         action="store_true",
-        help="Run in headless mode without launching the GUI. After clicking 'generate', the program will automatically save trajectory coordinates as CSV file, the gmap plot as HTML file in ./output/ and shows the plots.",
+        help="Run in headless mode without launching the GUI. After clicking 'Generate', the program will automatically save trajectory coordinates as CSV file, the gmap plot as HTML file in ./output/ and shows the plots.",
     )
 
     parser.add_argument(
         "--plot",
         type=str,
         choices=["matplotlib", "gmplot", "both"],
-        help="Select plotting backend. Options: 'matplotlib', 'gmplot' or 'both'.",
+        help="Select plot backend. Options: 'matplotlib', 'gmplot' or 'both'.",
     )
     parser.add_argument(
         "--to-csv",
         action="store_true",
-        help="Save trajectory coordinates to ./output/. Directory will be created if it does not exist.",
+        help="Save generated trajectory as CSV file to ./output/. Directory will be created if it does not exist.",
     )
     parser.add_argument(
         "--org-airport",
         type=str,
-        default="EDDF",
         metavar="ICAO",
+        required=False,
         help="ICAO code of origin airport (e.g., EDDF).",
     )
     parser.add_argument(
         "--org-rwy",
         type=str,
-        default="07C",
         metavar="RWY",
+        required=False,
         help="Runway ID of origin airport (e.g., 07C).",
     )
     parser.add_argument(
         "--sid",
         type=str,
-        default="ANEK1X",
         metavar="SID",
+        required=False,
         help="Standard Instrument Departure (SID) procedure name (e.g., ANEK1X).",
     )
     parser.add_argument(
         "--dest-airport",
         type=str,
-        default="EDDB",
         metavar="ICAO",
+        required=False,
         help="ICAO code of destination airport (e.g., EDDB).",
     )
     parser.add_argument(
         "--dest-rwy",
         type=str,
-        default="24R",
         metavar="RWY",
+        required=False,
         help="Runway ID of destination airport (e.g., 24R).",
     )
     parser.add_argument(
         "--star",
         type=str,
-        default="KLF24R",
         metavar="STAR",
+        required=False,
         help="Standard Terminal Arrival Route (STAR) procedure name (e.g., KLF24R).",
     )
 
-    return parser.parse_args()
+    args = parser.parse_args()
+
+    # Check arguments
+    if args.no_gui:
+        required_healess_fields = (
+            args.org_airport,
+            args.org_rwy,
+            args.sid,
+            args.dest_airport,
+            args.dest_rwy,
+            args.star,
+        )
+        if not all(required_healess_fields):
+            parser.error(
+                "In headless mode, the following arguments are required: "
+                "`--org-airport`, `--org-rwy`, `--sid`, `--dest_airport`, `--dest-rwy`, and `--star`."
+            )
+    else:
+        if not (args.to_csv or args.plot):
+            parser.error(
+                "When running in GUI mode (default), at least one of `--to-csv` or `--plot` must be specified. "
+                "Otherwise, the GUI will do nothing after clicking 'Generate'."
+            )
+
+    return args
