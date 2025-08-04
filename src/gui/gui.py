@@ -846,7 +846,12 @@ class TrajectoryGeneratorGUI(QWidget):
                 and runway == dest_rwy
             ):
                 filtered_appr_types.append(transitions["types"][i])
-        appr_type_list = [MAPPING_CODE_TO_NAV[appr[0]] for appr in filtered_appr_types]
+
+        appr_type_list = [
+            MAPPING_CODE_TO_NAV.get(appr[0])
+            for appr in filtered_appr_types
+            if MAPPING_CODE_TO_NAV.get(appr[0])
+        ]
         self._appr_type_list = sorted(set(appr_type_list))
         self._appr_type_combo.blockSignals(True)
         appr_type_prev = self._appr_type_combo.currentText()
