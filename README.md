@@ -160,3 +160,7 @@ Run the following command from the project's root directory to format and fix li
 ```ruff
 ruff format . && ruff check . --fix
 ```
+
+## Acknowledgements
+
+This project is part of the course "Flight Management and Procedure Design" at Technische Universität Berlin and is built upon the work of Prof. Maarten Uijt de Haag. I acknowledge his guidance and foundational contributions to the topic.
