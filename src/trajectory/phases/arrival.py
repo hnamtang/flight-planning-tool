@@ -6,7 +6,6 @@ from ..routing import create_flyby
 class ArrivalGenerator:
     def __init__(
         self,
-        dest_rwy,
         dest_rwy_coords,
         wpts_star,
         # TODO: add final approach, missed approach
@@ -17,7 +16,38 @@ class ArrivalGenerator:
         enroute_exit,
         num_interp_pnts,
     ):
-        self.dest_rwy = dest_rwy
+        """
+        Generate lateral trajectory for the arrival phase.
+
+        Parameters
+        ----------
+        dest_rwy_coords : list
+            Latitude and longitude [deg] of the destination runway
+
+        wpts_star : dict
+            A dictionary contains data of the STAR waypoints. The relevant keys for
+            this class are:
+
+                * `lat` : list
+                    A list contains latitudes of all corresponding waypoints [deg]
+                * `lon` : list
+                    A list contains longitudes of all corresponding waypoints [deg]
+                * `leg_type` : str
+                    Type of the leg associated with the waypoint
+                * `center_lat` : float
+                    Latitude of the center arc for RF leg [deg]
+                * `center_lon` : float
+                    Longitude of the center arc for RF leg [deg]
+
+        turn_radius : float
+            Turn radius of the aircraft given current altitude, TAS and bank angle
+
+        enroute_exit : list
+            Latitude and longitude [deg] of the en route exit waypoint in form (lat, lon)
+
+        num_interp_pnts : int
+            Number of interpolated points
+        """
         self.dest_rwy_coords = dest_rwy_coords
         self.wpts_star = wpts_star
         # TODO: add final approach, missed approach
@@ -49,7 +79,6 @@ class ArrivalGenerator:
             # apptr_exit = (apptr_trajectory[-1][0], apptr_trajectory[-1][1])
             # final_trajectory, final_distance = self._generate_final(
             #     apptr_exit,
-            #     self.dest_rwy,
             #     generate_missed_appr=generate_missed_appr,
             #     return_distance=True,
             # )
@@ -312,9 +341,7 @@ class ArrivalGenerator:
         else:
             return apptr_trajectory
 
-    def _generate_final(
-        self, apptr_exit, dest_rwy, generate_missed_appr, return_distance
-    ):
+    def _generate_final(self, apptr_exit, generate_missed_appr, return_distance):
         final_appr_trajectory = []
         if return_distance:
             final_appr_distance = 0

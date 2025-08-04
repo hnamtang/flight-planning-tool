@@ -24,9 +24,44 @@ def _plot_wpts(axis, wpts, color, label):
 
 class QtMatplotlibPlot(QtWidgets.QMainWindow):
     def __init__(self, trajectory, title, wpts_dep, wpts_enroute, wpts_star):
+        """
+        Plot trajectory with Matplotlib for GUI application.
+
+        Parameters
+        ----------
+        trajectory : dict
+            A dictionary contains latitude and longitude [deg] of interpolated points
+            of the flight route. The dictionary contains the following keys:
+
+                * `complete_coords` : list
+                    A list contains latitudes and longitudes [deg] in form of (lat, lon)
+                    for the complete flight route
+                * `departure_phase` : list
+                    A list contains latitudes and longitudes [deg] in form of (lat, lon)
+                    for the departure phase (SID)
+                * `enroute_phase` : list
+                    A list contains latitudes and longitudes [deg] in form of (lat, lon)
+                    for the en route phase
+                * `arrival_phase` : list
+                    A list contains latitudes and longitudes [deg] in form of (lat, lon)
+                    for the arrival phase (STAR)
+
+        title : str
+            Title of GUI window
+
+        wpts_dep, wpts_enroute, wpts_star : dict
+            Dictionaries contain data of departure, en route and arrival waypoints used
+            for SID procedure. 2 relevant keys for this class are:
+
+                * `lat` : list
+                    A list contains latitudes of all corresponding waypoints [deg]
+                * `lon` : list
+                    A list contains longitudes of all corresponding waypoints [deg]
+        """
         super().__init__()
         self.setWindowTitle(title)
-        self.setFixedSize(800, 600)
+        # self.setFixedSize(800, 600)
+        self.resize(800, 600)
         self._main = QtWidgets.QWidget()
         self.setCentralWidget(self._main)
 
@@ -52,11 +87,25 @@ class QtMatplotlibPlot(QtWidgets.QMainWindow):
 
         # Enroute
         lats_enroute, lons_enroute = zip(*self.trajectory["enroute_phase"])
+        ax.plot(
+            [lons_sid[-1], lons_enroute[0]],
+            [lats_sid[-1], lats_enroute[0]],
+            linestyle="-",
+            color="m",
+            zorder=1,
+        )
         ax.plot(lons_enroute, lats_enroute, linestyle="-", color="m", zorder=1)
         _plot_wpts(ax, self.wpts_enroute, "m", "En route")
 
         # STAR
         lats_star, lons_star = zip(*self.trajectory["arrival_phase"])
+        ax.plot(
+            [lons_enroute[-1], lons_star[0]],
+            [lats_enroute[-1], lats_star[0]],
+            linestyle="-",
+            color="g",
+            zorder=1,
+        )
         ax.plot(lons_star, lats_star, linestyle="-", color="g", zorder=1)
         _plot_wpts(ax, self.wpts_star, "g", "STAR")
 
@@ -78,6 +127,37 @@ class QtMatplotlibPlot(QtWidgets.QMainWindow):
 
 class StandardMatplotlibPlot:
     def __init__(self, trajectory, wpts_dep, wpts_enroute, wpts_star):
+        """
+        Plot trajectory with Matplotlib.
+
+        Parameters
+        ----------
+        trajectory : dict
+            A dictionary contains latitude and longitude [deg] of interpolated points
+            of the flight route. The dictionary contains the following keys:
+
+                * `complete_coords` : list
+                    A list contains latitudes and longitudes [deg] in form of (lat, lon)
+                    for the complete flight route
+                * `departure_phase` : list
+                    A list contains latitudes and longitudes [deg] in form of (lat, lon)
+                    for the departure phase (SID)
+                * `enroute_phase` : list
+                    A list contains latitudes and longitudes [deg] in form of (lat, lon)
+                    for the en route phase
+                * `arrival_phase` : list
+                    A list contains latitudes and longitudes [deg] in form of (lat, lon)
+                    for the arrival phase (STAR)
+
+        wpts_dep, wpts_enroute, wpts_star : dict
+            Dictionaries contain data of departure, en route and arrival waypoints used
+            for SID procedure. 2 relevant keys for this class are:
+
+                * `lat` : list
+                    A list contains latitudes of all corresponding waypoints [deg]
+                * `lon` : list
+                    A list contains longitudes of all corresponding waypoints [deg]
+        """
         self.trajectory = trajectory
         self.wpts_dep = wpts_dep
         self.wpts_enroute = wpts_enroute
@@ -94,11 +174,25 @@ class StandardMatplotlibPlot:
 
         # En route
         lats_enroute, lons_enroute = zip(*self.trajectory["enroute_phase"])
+        ax.plot(
+            [lons_sid[-1], lons_enroute[0]],
+            [lats_sid[-1], lats_enroute[0]],
+            linestyle="-",
+            color="m",
+            zorder=1,
+        )
         ax.plot(lons_enroute, lats_enroute, linestyle="-", color="m", zorder=1)
         _plot_wpts(ax, self.wpts_enroute, "m", "En route")
 
         # STAR
         lats_star, lons_star = zip(*self.trajectory["arrival_phase"])
+        ax.plot(
+            [lons_enroute[-1], lons_star[0]],
+            [lats_enroute[-1], lats_star[0]],
+            linestyle="-",
+            color="g",
+            zorder=1,
+        )
         ax.plot(lons_star, lats_star, linestyle="-", color="g", zorder=1)
         _plot_wpts(ax, self.wpts_star, "g", "STAR")
 

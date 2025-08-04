@@ -16,6 +16,40 @@ class GoogleMapPlot:
         org_airport,
         dest_airport,
     ):
+        """
+        Plot trajectory with Google Maps using `gmplot` package.
+
+        Parameters
+        ----------
+        trajectory : dict
+            A dictionary contains latitude and longitude [deg] of interpolated points
+            of the flight route. The dictionary contains the following keys:
+
+                * `complete_coords` : list
+                    A list contains latitudes and longitudes [deg] in form of (lat, lon)
+                    for the complete flight route
+                * `departure_phase` : list
+                    A list contains latitudes and longitudes [deg] in form of (lat, lon)
+                    for the departure phase (SID)
+                * `enroute_phase` : list
+                    A list contains latitudes and longitudes [deg] in form of (lat, lon)
+                    for the en route phase
+                * `arrival_phase` : list
+                    A list contains latitudes and longitudes [deg] in form of (lat, lon)
+                    for the arrival phase (STAR)
+
+        wpts_dep, wpts_enroute, wpts_star : dict
+            Dictionaries contain data of departure, en route and arrival waypoints used
+            for SID procedure. 2 relevant keys for this class are:
+
+                * `lat` : list
+                    A list contains latitudes of all corresponding waypoints [deg]
+                * `lon` : list
+                    A list contains longitudes of all corresponding waypoints [deg]
+
+        org_airport, dest_airport : str
+            ICAO code of the origin and destination airport
+        """
         self.trajectory = trajectory
         self.wpts_dep = wpts_dep
         self.wpts_enroute = wpts_enroute
@@ -58,6 +92,13 @@ class GoogleMapPlot:
             symbol="x",
         )
         self._gmap.plot(
+            [lats_sid[-1], lats_enroute[0]],
+            [lons_sid[-1], lons_enroute[0]],
+            color="m",
+            edge_width=3,
+            markersize=10,
+        )
+        self._gmap.plot(
             lats_enroute, lons_enroute, color="m", edge_width=3, markersize=10
         )
 
@@ -72,6 +113,13 @@ class GoogleMapPlot:
             marker=False,
             label="STAR",
             symbol="x",
+        )
+        self._gmap.plot(
+            [lats_enroute[-1], lats_star[0]],
+            [lons_enroute[-1], lons_star[0]],
+            color="g",
+            edge_width=3,
+            markersize=10,
         )
         self._gmap.plot(lats_star, lons_star, color="g", edge_width=3, markersize=10)
 
@@ -88,5 +136,8 @@ class GoogleMapPlot:
         print(f"Google Maps plot HTML file saved to: {self._output_html_path}")
 
     def show(self):
+        """
+        Show the plot by automatically open the default browser.
+        """
         if self._output_html_path:
             webbrowser.open(self._output_html_path.as_uri(), new=2)

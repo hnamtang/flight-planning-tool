@@ -9,12 +9,32 @@ from .config import DATA_DIR, PROJECT_ROOT
 
 
 def load_airport_codes(airports_dir_path):
+    """
+    Load all airport codes available in the `airports_dir_path` directory.
+    """
     airport_codes = sorted([f.stem for f in airports_dir_path.glob("*.txt")])
 
     return airport_codes
 
 
 def load_rwy_coords(airport_icao, rwy_id):
+    """
+    Load runway coordinate from given airport name and runway ID.
+
+    Parameters
+    ----------
+    airport_icao : str
+        ICAO code of the requested airport
+    rwy_id : str
+        Runway ID of the requested runway
+
+    Returns
+    -------
+    rwy_lat : float
+        Latitude of the requested runway [deg]
+    rwy_lon : float
+        Longitude of the requested runway [deg]
+    """
     airports_file_path = DATA_DIR / "Airports.txt"
 
     airport_found = False
@@ -31,6 +51,9 @@ def load_rwy_coords(airport_icao, rwy_id):
 
 
 def load_wpt_coords(wpt_file_path):
+    """
+    Load all global waypoint coordinates.
+    """
     df = pd.read_csv(wpt_file_path, delimiter=",", header=None, index_col=False)
     df_wpts = df.iloc[:, 0:3]
     df_wpts.insert(3, 3, np.zeros(shape=(len(df),)))
@@ -199,7 +222,30 @@ def save_trajectory_to_csv(
     dest_airport,
 ):
     """
-    Save trajectory data to a CSV file with columns: id, lat, lon, segment
+    Save trajectory data as CSV file with columns: lat, lon, segment.
+    The file is saved in `./output/` directory.
+
+    Parameters
+    ----------
+    trajectory : dict
+        A dictionary contains latitude and longitude [deg] of interpolated points
+        of the flight route. The dictionary contains the following keys:
+
+            * `complete_coords` : list
+                A list contains latitudes and longitudes [deg] in form of (lat, lon)
+                for the complete flight route
+            * `departure_phase` : list
+                A list contains latitudes and longitudes [deg] in form of (lat, lon)
+                for the departure phase (SID)
+            * `enroute_phase` : list
+                A list contains latitudes and longitudes [deg] in form of (lat, lon)
+                for the en route phase
+            * `arrival_phase` : list
+                A list contains latitudes and longitudes [deg] in form of (lat, lon)
+                for the arrival phase (STAR)
+
+    org_airport, dest_airport : str
+        ICAO code of the origin and destination airport
     """
     output_dir_path = PROJECT_ROOT / "output"
     output_dir_path.mkdir(parents=True, exist_ok=True)

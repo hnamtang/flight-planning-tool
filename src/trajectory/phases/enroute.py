@@ -4,11 +4,40 @@ from ..routing import create_flyby
 
 
 class EnrouteGenerator:
-    def __init__(self, wpts_enroute, turn_radius, sid_exit, wpts_arr, num_interp_pnts):
+    def __init__(self, wpts_enroute, turn_radius, sid_exit, wpts_star, num_interp_pnts):
+        """
+        Generate lateral trajectory for the en route phase.
+
+        Parameters
+        ----------
+        wpts_enroute, wpts_star : dict
+            A dictionary contains data of the En route and STAR waypoints.
+            The relevant keys for this class are:
+
+                * `lat` : list
+                    A list contains latitudes of all corresponding waypoints [deg]
+                * `lon` : list
+                    A list contains longitudes of all corresponding waypoints [deg]
+                * `leg_type` : str
+                    Type of the leg associated with the waypoint
+                * `center_lat` : float
+                    Latitude of the center arc for RF leg [deg]
+                * `center_lon` : float
+                    Longitude of the center arc for RF leg [deg]
+
+        turn_radius : float
+            Turn radius of the aircraft given current altitude, TAS and bank angle
+
+        sid_exit : list
+            Latitude and longitude [deg] of the SID exit waypoint in form (lat, lon)
+
+        num_interp_pnts : int
+            Number of interpolated points
+        """
         self.wpts_enroute = wpts_enroute
         self.turn_radius = turn_radius
         self.sid_exit = sid_exit
-        self.wpts_arr = wpts_arr
+        self.wpts_star = wpts_star
         self.num_interp_pnts = num_interp_pnts
 
     def generate(self, return_distance=False):
@@ -26,7 +55,7 @@ class EnrouteGenerator:
             if wpt_idx != number_wpts - 1:
                 leg_type_next = leg_type
             else:
-                leg_type_next = self.wpts_arr["leg_type"][0]
+                leg_type_next = self.wpts_star["leg_type"][0]
 
             lat_prev, lon_prev = prev_coords
             lat_wpt = self.wpts_enroute["lat"][wpt_idx]
@@ -42,8 +71,8 @@ class EnrouteGenerator:
                     lat_next = self.wpts_enroute["lat"][wpt_idx + 1]
                     lon_next = self.wpts_enroute["lon"][wpt_idx + 1]
                 else:
-                    lat_next = self.wpts_arr["lat"][0]
-                    lon_next = self.wpts_arr["lon"][0]
+                    lat_next = self.wpts_star["lat"][0]
+                    lon_next = self.wpts_star["lon"][0]
 
                 (
                     flyby_center_lat,

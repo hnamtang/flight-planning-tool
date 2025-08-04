@@ -691,11 +691,9 @@ class TrajectoryGeneratorGUI(QWidget):
         org_airport_file = DATA_DIR / "airports" / f"{origin}.txt"
 
         # Show runways based on selected origin airport
-        dep_rwys, _, _ = TrajectoryGeneratorGUI._load_airport_data(
+        self._org_rwy_list, _, _ = TrajectoryGeneratorGUI._load_airport_data(
             org_airport_file, category="origin"
         )
-        filtered_rwys = [rwy for rwy in dep_rwys if rwy != "ALL"]
-        self._org_rwy_list = sorted(set(filtered_rwys))
         self._org_rwy_combo.blockSignals(True)
         org_rwy_prev = self._org_rwy_combo.currentText()
         self._org_rwy_combo.clear()
@@ -825,7 +823,6 @@ class TrajectoryGeneratorGUI(QWidget):
         dest_airport = self._dest_combo.currentText().strip().upper()
 
         # Retrieve the selected runway
-        # selected_rwy = self._star_combo.currentText()
         dest_rwy = rwy
 
         # Retrieved selected STAR
@@ -849,23 +846,15 @@ class TrajectoryGeneratorGUI(QWidget):
                 and runway == dest_rwy
             ):
                 filtered_appr_types.append(transitions["types"][i])
-        appr_type_list = [
-            # MAPPING_CODE_TO_NAV[appr[0]] + " " + appr[1:]
-            MAPPING_CODE_TO_NAV[appr[0]]
-            for appr in filtered_appr_types
-        ]
+        appr_type_list = [MAPPING_CODE_TO_NAV[appr[0]] for appr in filtered_appr_types]
         self._appr_type_list = sorted(set(appr_type_list))
         self._appr_type_combo.blockSignals(True)
         appr_type_prev = self._appr_type_combo.currentText()
         self._appr_type_combo.clear()
         if self._appr_type_list:
-            selected_rwy = self._dest_rwy_combo.currentText()
             # Set default approach type at start of the GUI
             if default_appr_type:
-                appr_type_default = (
-                    # MAPPING_CODE_TO_NAV[default_appr_type] + " " + selected_rwy
-                    MAPPING_CODE_TO_NAV[default_appr_type]
-                )
+                appr_type_default = MAPPING_CODE_TO_NAV[default_appr_type]
                 if appr_type_default in self._appr_type_list:
                     self._appr_type_combo.setCurrentText(appr_type_default)
             else:

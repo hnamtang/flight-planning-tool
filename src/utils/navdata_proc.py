@@ -9,6 +9,8 @@ Copyright (c) - TU Berlin, Flight Guidance and Air Transport
 
 import numpy as np
 
+from .config import DATA_DIR
+
 # import pandas as pd
 from .constants import MAPPING_NAV_TO_CODE
 
@@ -244,22 +246,41 @@ Reads an airport file and extracts departure runways.
 
 
 def get_departure_rwys(airport_filename):
-    rwys = []
+    # Get all runways
+    all_rwys = []
+    airport_name = str(airport_filename)[-8:-4]
+    airport_found = False
+    with open(DATA_DIR / "Airports.txt", "r") as fid:
+        for line in fid:
+            parts = line.strip().split(",")
+            if parts[0] == "A" and parts[1] == airport_name:
+                airport_found = True
+            elif airport_found and parts[0] == "R":
+                rwy_id = parts[1]
+                if rwy_id not in all_rwys:
+                    all_rwys.append(rwy_id)
+            elif airport_found and parts[0] == "A":
+                break
 
-    # Open the file for reading
+    # Get departure runways
+    dep_rwys = []
     with open(airport_filename, "r") as fid:
         for line in fid:
             # Split the line by ','
             parts = line.strip().split(",")
 
-            if len(parts) >= 4 and (parts[0] == "SID" or parts[0] == "FINAL"):
-                if parts[2] != "ALL":
-                    rwys.append(parts[2])
+            # if len(parts) >= 4 and (parts[0] == "SID" or parts[0] == "FINAL"):
+            # if parts[2] != "ALL":
+            # dep_rwys.append(parts[2])
+            if len(parts) >= 4 and parts[0] == "SID":
+                rwy_id = parts[2]
+                if rwy_id != "ALL" and rwy_id in all_rwys:
+                    dep_rwys.append(rwy_id)
 
     # Remove duplicate entries
-    rwys = sorted(set(rwys))
+    dep_rwys = sorted(set(dep_rwys))
 
-    return rwys
+    return dep_rwys
 
 
 """
@@ -491,7 +512,8 @@ def load_sid_waypoints(airport_filename, sid, runway, table_fixes):
             if (
                 parts[0] == "SID"
                 and parts[1] == sid
-                and (parts[2] == runway or parts[2] == "ALL")
+                # and (parts[2] == runway or parts[2] == "ALL")
+                and parts[2] == runway
             ):
                 sid_found = True
             elif sid_found and len(parts) > 4:
@@ -517,7 +539,8 @@ def load_star_waypoints(airport_filename, star, runway, table_fixes):
             if (
                 parts[0] == "STAR"
                 and parts[1] == star
-                and (parts[2] == runway or parts[2] == "ALL")
+                # and (parts[2] == runway or parts[2] == "ALL")
+                and parts[2] == runway
             ):
                 star_found = True
             elif star_found and len(parts) > 4:

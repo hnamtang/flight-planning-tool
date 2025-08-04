@@ -7,6 +7,38 @@ class DepartureGenerator:
     def __init__(
         self, org_rwy_coords, wpts_dep, turn_radius, enroute_entry, num_interp_pnts
     ):
+        """
+        Generate lateral trajectory for the departure phase.
+
+        Parameters
+        ----------
+        org_rwy_coords : list
+            Latitude and longitude [deg] of the origin runway
+
+        wpts_dep : dict
+            A dictionary contains data of the SID waypoints. The relevant keys for
+            this class are:
+
+                * `lat` : list
+                    A list contains latitudes of all corresponding waypoints [deg]
+                * `lon` : list
+                    A list contains longitudes of all corresponding waypoints [deg]
+                * `leg_type` : str
+                    Type of the leg associated with the waypoint
+                * `center_lat` : float
+                    Latitude of the center arc for RF leg [deg]
+                * `center_lon` : float
+                    Longitude of the center arc for RF leg [deg]
+
+        turn_radius : float
+            Turn radius of the aircraft given current altitude, TAS and bank angle
+
+        enroute_entry : list
+            Latitude and longitude [deg] of the en route entry waypoint in form (lat, lon)
+
+        num_interp_pnts : int
+            Number of interpolated points
+        """
         self.org_rwy_coords = org_rwy_coords
         self.wpts_dep = wpts_dep
         self.turn_radius = turn_radius
@@ -23,8 +55,6 @@ class DepartureGenerator:
         number_wpts = len(self.wpts_dep["lat"])
         prev_coords = self.org_rwy_coords
         for wpt_idx in range(number_wpts):
-            # prev_coords = (self.wpts_dep["lat"][0], self.wpts_dep["lon"][0])
-            # for wpt_idx in range(1, 2):
             leg_type_current = self.wpts_dep["leg_type"][wpt_idx]
 
             if wpt_idx != number_wpts - 1:

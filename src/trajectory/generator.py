@@ -125,7 +125,6 @@ class LateralTrajectoryGenerator:
         # Phase 3: STAR -> destination airport
         enroute_exit = enroute_trajectory[-1]
         arrival = ArrivalGenerator(
-            self.dest_rwy,
             self.dest_rwy_coords,
             self.wpts_star,
             # TODO: add final approach, missed approach
