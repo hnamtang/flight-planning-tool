@@ -34,6 +34,18 @@ python3 main.py --save-api-key YOUR_KEY
 
 ## Usage
 
+To view the help message with available options and usage instructions, run:
+
+```bash
+python3 main.py -h
+```
+
+or
+
+```bash
+python3 main.py --help
+```
+
 The main script is `./main.py`. Run it with a GUI or in headless mode.
 
 ### GUI Mode
