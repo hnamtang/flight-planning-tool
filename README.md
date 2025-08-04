@@ -2,7 +2,7 @@
 
 ## Project Part 2 - Lateral Trajectory Generation
 
-This project focuses on generating lateral trajectories for Flight Management System (FMS), based on user-defined departure and destination airport, runways, and procedures (SID/STAR)..
+This project focuses on generating lateral trajectories for Flight Management System (FMS), based on user-defined departure and destination airport, runways, and procedures (SID/STAR).
 The primary goal is to compute a lateral flight path in conformance with the published waypoints and the associated ARINC 424 leg types.
 
 ## Current Capabilities
@@ -20,7 +20,7 @@ Future development may include support for additional leg types, SID transition,
 
 Ensure Python and all required dependencies are installed in a virtual environment:
 
-```zsh
+```bash
 python3 -m venv .venv
 source ./.venv/bin/activate
 pip install -r requirements.txt
@@ -28,7 +28,7 @@ pip install -r requirements.txt
 
 To use the Google Maps plot (`gmplot`), set your API key once:
 
-```zsh
+```bash
 python3 main.py --save-api-key YOUR_KEY
 ```
 
@@ -40,7 +40,7 @@ The main script is `./main.py`. Run it with a GUI or in headless mode.
 
 Launch the GUI:
 
-```zsh
+```bash
 python3 main.py [options]
 ```
 
@@ -56,13 +56,27 @@ python3 main.py [options]
   - Opens the GUI.
   - Clicking "generate" button displays the trajectory plot using the specified backend (Matplotlib, gmplot, or both).
 
+**Examples:**
+
+Open GUI, save CSV, plot with Google Maps:
+
+```bash
+python3 main.py --to-csv --plot gmplot
+```
+
+Open GUI, no CSV, plot with Matplotlib and Google Maps:
+
+```bash
+python3 main.py --plot both
+```
+
 **Note:** The CSV and plot file are saved in `./output/` by default.
 
 ### Headless Mode
 
 Run without GUI:
 
-```zsh
+```bash
 python3 main.py --no-gui [options]
 ```
 
@@ -81,19 +95,19 @@ python3 main.py --no-gui [options]
 
 Generate trajectory from EDDF (Frankfurt Airport), runway 07C, with SID ANEK1X to EDDB (Berlin Brandenburg Airport), runway 24R, with STAR KLF24R, save CSV, no plot:
 
-```zsh
+```bash
 python3 main.py --no-gui --to-csv --org-airport EDDF --org-rwy 07C --sid ANEK1X --dest-airport EDDB --dest-rwy 24R --star KLF24R
 ```
 
 Generate trajectory from OTBD (Doha International Airport), runway 33, with SID ALVE3N to EDDM (Munich Airport), runway 26R, with STAR ELMO1D, save CSV, plot with Matplotlib:
 
-```zsh
+```bash
 python3 main.py --no-gui --to-csv --plot matplotlib --org-airport OTBD --org-rwy 33 --sid ALVE3N --dest-airport EDDM --dest-rwy 26R --star ELMO1D
 ```
 
 Generate trajectory from ZBAA (Beijing Capital International Airport), runway 18L, with SID BOTP6J to RJTT airport (Haneda Airport), runway 34L, with STAR AKSE1A, no CSV, plot with Google Maps:
 
-```zsh
+```bash
 python3 main.py --no-gui --plot gmplot --org-airport ZBAA --org-rwy 18L --sid BOTP6J --dest-airport RJTT --dest-rwy 34L --star AKSE1A
 ```
 
