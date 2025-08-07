@@ -68,7 +68,7 @@ output/ export-ignore
 *.jpg binary
 *.jpeg binary
 *.eps binary
-*.svg binary
+*.svg text eol=lf
 
 # -----------------------------------------------------------
 # Archive and miscellaneous binaries
