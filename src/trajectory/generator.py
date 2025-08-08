@@ -251,7 +251,7 @@ class LateralTrajectoryGenerator:
 
 
 if __name__ == "__main__":
-    import matplotlib.pyplot as plt
+    from ..plotting import StandardMatplotlibPlot
 
     # Define data for test
 
@@ -291,14 +291,28 @@ if __name__ == "__main__":
     # star = "ERNE2N"
     # dest_rwy = "31R"
 
-    org_airport = "LFPG"
-    sid = "AGOP6D"
-    org_rwy = "27R"
-    dest_airport = "EDDB"
-    star = "KLF24R"
-    dest_rwy = "24R"
+    # org_airport = "LFPG"
+    # sid = "AGOP6D"
+    # org_rwy = "27R"
+    # dest_airport = "EDDB"
+    # star = "KLF24R"
+    # dest_rwy = "24R"
     # TODO: add final approach, missed approach
     # appr_type = "RNAV"
+
+    # org_airport = "ZBAA"
+    # sid = "BOTP6J"
+    # org_rwy = "18L"
+    # dest_airport = "RJTT"
+    # star = "AKSE1A"
+    # dest_rwy = "34L"
+
+    org_airport = "WSSS"
+    sid = "ANIT1D"
+    org_rwy = "20L"
+    dest_airport = "VHHH"
+    star = "BETY3B"
+    dest_rwy = "25R"
 
     table_fixes = read_csv(
         DATA_DIR / "Waypoints.txt", delimiter=",", header=None, index_col=False
@@ -318,7 +332,20 @@ if __name__ == "__main__":
         DATA_DIR / "airports" / f"{dest_airport}.txt", star, dest_rwy, table_fixes
     )
 
-    plt.figure(tight_layout=True)
+    # Select enroute waypoint based on selected SID and STAR
+    enroute_llh = create_straight(
+        wpts_dep["lat"][-1],
+        wpts_dep["lon"][-1],
+        wpts_star["lat"][0],
+        wpts_star["lon"][0],
+        num_points=100,
+        return_distance=False,
+        exclude_start=False,
+    )
+    all_wpts_llh = load_wpt_coords(DATA_DIR / "Waypoints.txt")
+    wpts_enroute = select_enroute_waypoints(
+        enroute_llh, all_wpts_llh, number_wpts_selected=5
+    )
 
     trajectory_generator = LateralTrajectoryGenerator(
         org_airport,
@@ -330,79 +357,9 @@ if __name__ == "__main__":
         # TODO: add final approach, missed approach
         # appr_type,
     )
-    trajectory, travel_distance = trajectory_generator.generate(
-        generate_missed_appr=True, return_distance=True
-    )
-    print(f"travel_distance = {travel_distance} NM")
+    trajectory = trajectory_generator.generate()
 
-    lats, lons = zip(*trajectory["complete_coords"])
-
-    plt.scatter(
-        org_rwy_coords[1],
-        org_rwy_coords[0],
-        marker="1",
-        s=40,
-        c="y",
-        label="origin airport",
-        zorder=1,
-    )
-    plt.scatter(
-        dest_rwy_coords[1],
-        dest_rwy_coords[0],
-        marker="1",
-        s=40,
-        c="y",
-        label="destination airport",
-        zorder=1,
-    )
-    for i_sid in range(len(wpts_dep["lat"])):
-        if i_sid != len(wpts_dep["lat"]) - 1:
-            label = None
-        else:
-            label = "SID"
-        plt.scatter(
-            wpts_dep["lon"][i_sid],
-            wpts_dep["lat"][i_sid],
-            marker="x",
-            linewidths=1.5,
-            s=20,
-            c="b",
-            label=label,
-            zorder=1,
-        )
-    for i_enroute in range(len(trajectory_generator.wpts_enroute["lat"])):
-        if i_enroute != len(wpts_dep["lat"]) - 1:
-            label = None
-        else:
-            label = "En Route"
-        plt.scatter(
-            trajectory_generator.wpts_enroute["lon"][i_enroute],
-            trajectory_generator.wpts_enroute["lat"][i_enroute],
-            marker="x",
-            linewidths=1.5,
-            s=20,
-            c="r",
-            label=label,
-            zorder=1,
-        )
-    for i_star in range(len(wpts_star["lat"])):
-        if i_star != len(wpts_star["lat"]) - 1:
-            label = None
-        else:
-            label = "STAR"
-        plt.scatter(
-            wpts_star["lon"][i_star],
-            wpts_star["lat"][i_star],
-            marker="x",
-            linewidths=1.5,
-            s=20,
-            c="g",
-            label=label,
-            zorder=1,
-        )
-    plt.legend(loc="best")
-    plt.grid(True)
-    plt.xlabel("Longitude [deg]")
-    plt.ylabel("Latitude [deg]")
-    plt.plot(lons, lats, linewidth=1.5, color="b", label="route", zorder=1)
-    plt.show()
+    plotter = StandardMatplotlibPlot(trajectory, wpts_dep, wpts_enroute, wpts_star)
+    plotter.plot(is_latex=True)
+    plotter.show()
+    # plotter.save("complete_trajectory", img_type="pdf")

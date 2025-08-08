@@ -164,13 +164,32 @@ class StandardMatplotlibPlot:
         self.wpts_star = wpts_star
         self.fig = None
 
-    def plot(self):
-        self.fig, ax = plt.subplots()
+    def plot(self, is_latex=False):
+        if is_latex:
+            # Update rcParams for LaTeX
+            plt.rcParams.update(
+                {
+                    "text.usetex": True,
+                    "font.family": "serif",
+                    "font.serif": ["Computer Modern"],
+                    "font.size": 8,
+                    "lines.linewidth": 1,
+                    "grid.alpha": 0.3,
+                }
+            )
+            fig_size = (3.5, 2.16)  # IEEE single column
+        else:
+            fig_size = (6.4, 4.8)
+
+        self.fig, ax = plt.subplots(figsize=fig_size)
 
         # SID
         lats_sid, lons_sid = zip(*self.trajectory["departure_phase"])
-        ax.plot(lons_sid, lats_sid, linestyle="-", color="b", zorder=1)
-        _plot_wpts(ax, self.wpts_dep, "b", "SID")
+        if not is_latex:
+            ax.plot(lons_sid, lats_sid, linestyle="-", color="b", zorder=1)
+            _plot_wpts(ax, self.wpts_dep, "b", "SID")
+        else:
+            ax.plot(lons_sid, lats_sid, linestyle="-", color="b", label="SID", zorder=1)
 
         # En route
         lats_enroute, lons_enroute = zip(*self.trajectory["enroute_phase"])
@@ -181,8 +200,18 @@ class StandardMatplotlibPlot:
             color="m",
             zorder=1,
         )
-        ax.plot(lons_enroute, lats_enroute, linestyle="-", color="m", zorder=1)
-        _plot_wpts(ax, self.wpts_enroute, "m", "En route")
+        if not is_latex:
+            ax.plot(lons_enroute, lats_enroute, linestyle="-", color="m", zorder=1)
+            _plot_wpts(ax, self.wpts_enroute, "m", "En route")
+        else:
+            ax.plot(
+                lons_enroute,
+                lats_enroute,
+                linestyle="-",
+                color="m",
+                label="En route",
+                zorder=1,
+            )
 
         # STAR
         lats_star, lons_star = zip(*self.trajectory["arrival_phase"])
@@ -193,8 +222,18 @@ class StandardMatplotlibPlot:
             color="g",
             zorder=1,
         )
-        ax.plot(lons_star, lats_star, linestyle="-", color="g", zorder=1)
-        _plot_wpts(ax, self.wpts_star, "g", "STAR")
+        if not is_latex:
+            ax.plot(lons_star, lats_star, linestyle="-", color="g", zorder=1)
+            _plot_wpts(ax, self.wpts_star, "g", "STAR")
+        else:
+            ax.plot(
+                lons_star,
+                lats_star,
+                linestyle="-",
+                color="g",
+                label="STAR",
+                zorder=1,
+            )
 
         ax.set_xlabel("Longitude [deg]")
         ax.set_ylabel("Latitude [deg]")
@@ -204,3 +243,34 @@ class StandardMatplotlibPlot:
     def show(self):
         if self.fig:
             plt.show()
+
+    def save(self, fig_name, img_type):
+        if self.fig:
+            if not fig_name:
+                raise ValueError("fig_name is missing.")
+
+            from ..utils import PROJECT_ROOT
+
+            if img_type.upper() == "PDF":
+                self.fig.savefig(
+                    PROJECT_ROOT / "output" / f"{fig_name}.pdf",
+                    format="pdf",
+                    dpi=1200,
+                    bbox_inches="tight",
+                )
+            elif img_type.upper() == "EPS":
+                self.fig.savefig(
+                    PROJECT_ROOT / "output" / f"{fig_name}.eps",
+                    format="eps",
+                    dpi=1200,
+                    bbox_inches="tight",
+                )
+            elif img_type.upper() == "PNG":
+                self.fig.savefig(
+                    PROJECT_ROOT / "output" / f"{fig_name}.png",
+                    format="png",
+                    dpi=1200,
+                    bbox_inches="tight",
+                )
+            else:
+                raise ValueError("img_type is missing.")
