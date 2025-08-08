@@ -8,7 +8,6 @@
 # -----------------------------------------------------------
 *.py text eol=lf diff=python
 *.pyw text eol=lf
-*.ipynb text eol=lf filter=nb-strip-metadata diff=ipynb
 
 # -----------------------------------------------------------
 # Python build and environment files
@@ -16,8 +15,10 @@
 *.pyc binary
 *.pyo binary
 __pycache__/ export-ignore
-.env export-ignore
+.venv/ export-ignore
 .venv_fmpd/ export-ignore
+build/ export-ignore
+output/ export-ignore
 
 # -----------------------------------------------------------
 # Jupyter notebook output stripping (if used)
@@ -34,27 +35,6 @@ __pycache__/ export-ignore
 *.bst text eol=lf
 
 # -----------------------------------------------------------
-# Common text/data files
-# -----------------------------------------------------------
-*.md text eol=lf
-*.txt text eol=lf
-*.csv text eol=lf
-*.yaml text eol=lf
-*.yml text eol=lf
-*.json text eol=lf
-*.toml text eol=lf
-
-# -----------------------------------------------------------
-# Images and binary outputs (no diff, no CRLF conversion)
-# -----------------------------------------------------------
-*.pdf binary
-*.png binary
-*.jpg binary
-*.jpeg binary
-*.eps binary
-*.svg binary
-
-# -----------------------------------------------------------
 # LaTeX build artifacts (binary, ignore diffs)
 # -----------------------------------------------------------
 *.aux binary
@@ -68,6 +48,27 @@ __pycache__/ export-ignore
 *.fls binary
 *.fdb_latexmk binary
 *.synctex.gz binary
+
+# -----------------------------------------------------------
+# Common text/data files
+# -----------------------------------------------------------
+*.md text eol=lf
+*.txt text eol=lf
+*.csv text eol=lf -diff
+*.yaml text eol=lf
+*.yml text eol=lf
+*.json text eol=lf -diff
+*.toml text eol=lf
+
+# -----------------------------------------------------------
+# Images and binary outputs (no diff, no CRLF conversion)
+# -----------------------------------------------------------
+*.pdf binary
+*.png binary
+*.jpg binary
+*.jpeg binary
+*.eps binary
+*.svg text eol=lf
 
 # -----------------------------------------------------------
 # Archive and miscellaneous binaries
